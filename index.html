@@ -412,10 +412,10 @@
 <p class="subtitle">Стратегии за реакция • Преговор и Изпитване</p>
 
 <div class="tabs">
-  <button class="tab active" onclick="showSection('vocab')">📚 Речник</button>
-  <button class="tab" onclick="showSection('flash')">🃏 Флашкарти</button>
-  <button class="tab" onclick="startQuiz()">🎯 Изпитване</button>
-  <button class="tab" onclick="startBlitz()">⚡ Блиц</button>
+  <button class="tab active" onclick="showSection('vocab',this)">📚 Речник</button>
+  <button class="tab" onclick="showSection('flash',this)">🃏 Карти</button>
+  <button class="tab" onclick="showSection('quiz',this);startQuiz()">🎯 Тест</button>
+  <button class="tab" onclick="showSection('blitz',this);startBlitz()">⚡ Блиц</button>
 </div>
 
 <!-- VOCAB -->
@@ -623,11 +623,11 @@ const vocab = [
 ];
 
 // TABS
-function showSection(id) {
+function showSection(id, btn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
   if (id === 'flash') initFlash();
 }
 
@@ -679,12 +679,6 @@ function shuffle(arr) {
 }
 
 function startQuiz() {
-  // switch tab
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('quiz').classList.add('active');
-  document.querySelectorAll('.tab')[2].classList.add('active');
-
   quizItems = shuffle([...vocab]).slice(0, 20);
   quizIdx = 0; score = 0;
   document.getElementById('quiz-active').style.display = 'block';
@@ -781,10 +775,6 @@ const BLITZ_TICK = 80; // ms
 const BLITZ_TIME_DRAIN = 1.8; // % per tick
 
 function startBlitz() {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('blitz').classList.add('active');
-  document.querySelectorAll('.tab')[3].classList.add('active');
   document.getElementById('blitz-start-screen').style.display = 'flex';
   document.getElementById('blitz-game-screen').style.display = 'none';
   document.getElementById('blitz-over-screen').style.display = 'none';
