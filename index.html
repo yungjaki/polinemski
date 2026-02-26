@@ -273,6 +273,134 @@
   }
   .flash-nav button:hover { border-color: var(--accent); }
   .flash-counter { color: var(--muted); font-size: 0.85rem; }
+
+  /* BLITZ GAME */
+  .blitz-arena {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    height: 420px;
+    margin-bottom: 16px;
+  }
+  .blitz-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: #111;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .blitz-lives { color: var(--accent); font-size: 1.1rem; }
+  .blitz-score-val { color: var(--gold); font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; }
+  .blitz-timer-bar-wrap {
+    height: 5px;
+    background: var(--border);
+    position: relative;
+  }
+  .blitz-timer-bar {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.1s linear;
+  }
+  .blitz-fall-area {
+    position: relative;
+    height: 280px;
+    overflow: hidden;
+  }
+  .falling-word {
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    color: var(--text);
+    background: #1e1e1e;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 16px;
+    white-space: nowrap;
+    transition: top 0.1s linear;
+    cursor: default;
+    user-select: none;
+  }
+  .falling-word.hit {
+    color: var(--green);
+    border-color: var(--green);
+    background: rgba(42,157,143,0.15);
+    animation: pop 0.3s ease forwards;
+  }
+  .falling-word.miss {
+    color: var(--accent);
+    border-color: var(--accent);
+    animation: shake 0.3s ease forwards;
+  }
+  @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.2)} 100%{transform:scale(0);opacity:0} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .blitz-answers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+  @media(max-width:480px){ .blitz-answers { grid-template-columns: 1fr; } }
+  .blitz-ans-btn {
+    background: #1a1a1a;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 11px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.88rem;
+    transition: all 0.15s;
+    text-align: left;
+  }
+  .blitz-ans-btn:hover { border-color: var(--gold); background: #242424; }
+  .blitz-ans-btn.correct { background: rgba(42,157,143,0.2); border-color: var(--green); }
+  .blitz-ans-btn.wrong { background: rgba(230,57,70,0.15); border-color: var(--accent); }
+  .blitz-start-screen, .blitz-over-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 360px;
+    text-align: center;
+    padding: 32px;
+  }
+  .blitz-big { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; color: var(--accent); line-height:1; }
+  .blitz-sub { color: var(--muted); font-size: 0.9rem; margin: 10px 0 28px; line-height: 1.6; }
+  .blitz-play-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 14px 44px;
+    border-radius: 4px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: background 0.2s;
+  }
+  .blitz-play-btn:hover { background: #c1121f; }
+  .combo-flash {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--gold);
+    pointer-events: none;
+    animation: combofade 0.8s ease forwards;
+    z-index: 10;
+  }
+  @keyframes combofade { 0%{opacity:1;transform:translate(-50%,-70%)} 100%{opacity:0;transform:translate(-50%,-120%)} }
 </style>
 </head>
 <body>
@@ -284,6 +412,7 @@
   <button class="tab active" onclick="showSection('vocab')">📚 Речник</button>
   <button class="tab" onclick="showSection('flash')">🃏 Флашкарти</button>
   <button class="tab" onclick="startQuiz()">🎯 Изпитване</button>
+  <button class="tab" onclick="startBlitz()">⚡ Блиц</button>
 </div>
 
 <!-- VOCAB -->
@@ -359,6 +488,40 @@
     <div class="vocab-item"><span class="de">sich vor etw. verstecken</span><span class="bg">крия се от проблемни ситуации</span></div>
     <div class="vocab-item"><span class="de">Schlagfertigkeit kommt nicht von heute auf morgen</span><span class="bg">Остроумието не идва от днес за утре, а стъпка по стъпка</span></div>
     <div class="vocab-item"><span class="de">scheitern</span><span class="bg">провалям се</span></div>
+  </div>
+</div>
+
+
+<!-- BLITZ GAME -->
+<div class="section" id="blitz">
+  <div id="blitz-start-screen" class="blitz-start-screen">
+    <div class="blitz-big">⚡ БЛИЦ</div>
+    <div class="blitz-sub">
+      Немска дума пада от небето.<br>
+      Избери правилния превод преди да падне!<br>
+      Имаш <strong>3 живота</strong>. Колко точки ще натрупаш?
+    </div>
+    <button class="blitz-play-btn" onclick="blitzGo()">▶ СТАРТ</button>
+  </div>
+  <div id="blitz-game-screen" style="display:none">
+    <div class="blitz-arena">
+      <div class="blitz-topbar">
+        <span>❤️ <span class="blitz-lives" id="blitz-lives">♥♥♥</span></span>
+        <span>COMBO: <span id="blitz-combo" style="color:var(--gold)">x1</span></span>
+        <span>ТОЧКИ: <span class="blitz-score-val" id="blitz-score-val">0</span></span>
+      </div>
+      <div class="blitz-timer-bar-wrap">
+        <div class="blitz-timer-bar" id="blitz-timer-bar"></div>
+      </div>
+      <div class="blitz-fall-area" id="blitz-fall-area"></div>
+      <div class="blitz-answers" id="blitz-answers"></div>
+    </div>
+  </div>
+  <div id="blitz-over-screen" style="display:none" class="blitz-over-screen">
+    <div class="blitz-big" id="blitz-final-score">0</div>
+    <div style="color:var(--muted);font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">точки</div>
+    <div class="blitz-sub" id="blitz-final-msg"></div>
+    <button class="blitz-play-btn" onclick="blitzGo()">🔄 ОТНОВО</button>
   </div>
 </div>
 
@@ -597,6 +760,178 @@ function showResult() {
             '📚 Повтори речника и опитай пак!';
   document.getElementById('result-msg').textContent = msg;
 }
+
+
+// ========== BLITZ GAME ==========
+let blitzLives = 3;
+let blitzScore = 0;
+let blitzCombo = 1;
+let blitzCurrentItem = null;
+let blitzFallInterval = null;
+let blitzTimerInterval = null;
+let blitzTimeLeft = 100; // percent
+let blitzSpeed = 0.4; // px per tick
+let blitzWordTop = 20;
+let blitzActive = false;
+let blitzAnswered = false;
+const BLITZ_TICK = 80; // ms
+const BLITZ_TIME_DRAIN = 1.8; // % per tick
+
+function startBlitz() {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('blitz').classList.add('active');
+  document.querySelectorAll('.tab')[3].classList.add('active');
+  document.getElementById('blitz-start-screen').style.display = 'flex';
+  document.getElementById('blitz-game-screen').style.display = 'none';
+  document.getElementById('blitz-over-screen').style.display = 'none';
+}
+
+function blitzGo() {
+  blitzLives = 3;
+  blitzScore = 0;
+  blitzCombo = 1;
+  blitzActive = true;
+  blitzSpeed = 0.35;
+  document.getElementById('blitz-start-screen').style.display = 'none';
+  document.getElementById('blitz-over-screen').style.display = 'none';
+  document.getElementById('blitz-game-screen').style.display = 'block';
+  updateBlitzHUD();
+  blitzNextWord();
+}
+
+function updateBlitzHUD() {
+  const hearts = ['','♥','♥♥','♥♥♥'][blitzLives] || '';
+  document.getElementById('blitz-lives').textContent = hearts || '💀';
+  document.getElementById('blitz-score-val').textContent = blitzScore;
+  document.getElementById('blitz-combo').textContent = 'x' + blitzCombo;
+}
+
+function blitzNextWord() {
+  if (!blitzActive) return;
+  blitzAnswered = false;
+  clearInterval(blitzFallInterval);
+  clearInterval(blitzTimerInterval);
+  blitzTimeLeft = 100;
+
+  // pick random word
+  const pool = [...new Set(vocab.map(v => v.de))];
+  blitzCurrentItem = vocab[Math.floor(Math.random() * vocab.length)];
+
+  // render falling word
+  const area = document.getElementById('blitz-fall-area');
+  area.innerHTML = '';
+  const wordEl = document.createElement('div');
+  wordEl.className = 'falling-word';
+  wordEl.textContent = blitzCurrentItem.de;
+  const areaW = area.offsetWidth || 300;
+  const maxLeft = Math.max(20, areaW - 260);
+  wordEl.style.left = Math.floor(Math.random() * maxLeft) + 'px';
+  blitzWordTop = 10;
+  wordEl.style.top = blitzWordTop + 'px';
+  area.appendChild(wordEl);
+
+  // render 4 answer buttons
+  const answers = document.getElementById('blitz-answers');
+  answers.innerHTML = '';
+  const wrong = shuffle(vocab.filter(v => v.bg !== blitzCurrentItem.bg)).slice(0,3);
+  const opts = shuffle([blitzCurrentItem, ...wrong]);
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'blitz-ans-btn';
+    btn.textContent = opt.bg;
+    btn.onclick = () => blitzAnswer(btn, opt.bg);
+    answers.appendChild(btn);
+  });
+
+  // fall animation
+  const areaH = area.offsetHeight || 260;
+  blitzFallInterval = setInterval(() => {
+    blitzWordTop += blitzSpeed;
+    wordEl.style.top = blitzWordTop + 'px';
+    if (blitzWordTop >= areaH - 60) {
+      // reached bottom = miss
+      clearInterval(blitzFallInterval);
+      clearInterval(blitzTimerInterval);
+      if (!blitzAnswered) blitzMiss(wordEl);
+    }
+  }, BLITZ_TICK);
+
+  // timer bar
+  document.getElementById('blitz-timer-bar').style.width = '100%';
+  blitzTimerInterval = setInterval(() => {
+    blitzTimeLeft -= BLITZ_TIME_DRAIN;
+    document.getElementById('blitz-timer-bar').style.width = Math.max(0, blitzTimeLeft) + '%';
+  }, BLITZ_TICK);
+}
+
+function blitzAnswer(btn, chosen) {
+  if (blitzAnswered) return;
+  blitzAnswered = true;
+  clearInterval(blitzFallInterval);
+  clearInterval(blitzTimerInterval);
+  const area = document.getElementById('blitz-fall-area');
+  const wordEl = area.querySelector('.falling-word');
+  const allBtns = document.querySelectorAll('.blitz-ans-btn');
+  allBtns.forEach(b => b.disabled = true);
+
+  if (chosen === blitzCurrentItem.bg) {
+    // correct
+    blitzScore += 10 * blitzCombo;
+    blitzCombo = Math.min(blitzCombo + 1, 5);
+    if (wordEl) wordEl.classList.add('hit');
+    if (blitzCombo > 2) showCombo(area, 'COMBO x' + blitzCombo + '! 🔥');
+    updateBlitzHUD();
+    btn.classList.add('correct');
+    // speed up slightly
+    blitzSpeed = Math.min(blitzSpeed + 0.04, 1.5);
+    setTimeout(() => { if (blitzActive) blitzNextWord(); }, 600);
+  } else {
+    btn.classList.add('wrong');
+    blitzMiss(wordEl);
+  }
+}
+
+function blitzMiss(wordEl) {
+  blitzAnswered = true;
+  blitzLives--;
+  blitzCombo = 1;
+  if (wordEl) wordEl.classList.add('miss');
+  // highlight correct answer
+  document.querySelectorAll('.blitz-ans-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === blitzCurrentItem.bg) b.classList.add('correct');
+  });
+  updateBlitzHUD();
+  if (blitzLives <= 0) {
+    blitzActive = false;
+    setTimeout(blitzGameOver, 800);
+  } else {
+    setTimeout(() => { if (blitzActive) blitzNextWord(); }, 900);
+  }
+}
+
+function showCombo(area, text) {
+  const el = document.createElement('div');
+  el.className = 'combo-flash';
+  el.textContent = text;
+  area.appendChild(el);
+  setTimeout(() => el.remove(), 800);
+}
+
+function blitzGameOver() {
+  clearInterval(blitzFallInterval);
+  clearInterval(blitzTimerInterval);
+  document.getElementById('blitz-game-screen').style.display = 'none';
+  document.getElementById('blitz-over-screen').style.display = 'flex';
+  document.getElementById('blitz-final-score').textContent = blitzScore;
+  const msgs = blitzScore >= 200 ? '🏆 Легенда! Schlagfertig наистина!' :
+               blitzScore >= 100 ? '🔥 Отлично! Рефлексите ти са бързи!' :
+               blitzScore >= 50  ? '👍 Добро начало! Опитай пак!' :
+                                   '😅 Повтори речника и атакувай отново!';
+  document.getElementById('blitz-final-msg').textContent = msgs;
+}
+// ========== END BLITZ ==========
 
 // init flash on load
 initFlash();
